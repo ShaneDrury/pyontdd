@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to pyontdd’s documentation! &mdash; pyontdd 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyontdd 0.1.1 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">pyontdd 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-pyontdd-s-documentation">
+<h1>Welcome to pyontdd&#8217;s documentation!<a class="headerlink" href="#welcome-to-pyontdd-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-pyontdd.lib.hadron"></span><dl class="class">
+<dt id="pyontdd.lib.hadron.Hadron">
+<em class="property">class </em><tt class="descclassname">pyontdd.lib.hadron.</tt><tt class="descname">Hadron</tt><big>(</big><em>data</em>, <em>masses=None</em>, <em>gamma_type=None</em>, <em>hadron_type=None</em>, <em>fit_type=None</em>, <em>lattice_size=None</em>, <em>config_number=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/hadron.html#Hadron"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.hadron.Hadron" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Hadrons.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : array_like</p>
+<blockquote>
+<div><p>Numpy array of the data to be fit.</p>
+</div></blockquote>
+<p><strong>masses</strong> : tuple</p>
+<blockquote>
+<div><p>The bare masses of the valence quarks comprising the hadron e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">masses</span><span class="o">=</span><span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>gamma_type</strong> : string</p>
+<blockquote>
+<div><p>The gamma structure of the propagators e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">gamma_type</span><span class="o">=</span><span class="s">&quot;AP&quot;</span>
+</pre></div>
+</div>
+<p>for Axial-Pseudoscalar.</p>
+</div></blockquote>
+<p><strong>hadron_type</strong> : string</p>
+<blockquote>
+<div><p>The type of Hadron that the data represents e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">hadron_type</span><span class="o">=</span><span class="s">&quot;PseudoscalarMeson&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>fit_type</strong> : string</p>
+<blockquote>
+<div><p>The way we fit the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fit_type</span><span class="o">=</span><span class="s">&quot;Individual&quot;</span> <span class="ow">or</span> <span class="s">&quot;Simultaneous&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>lattice_size</strong> : dict</p>
+<blockquote>
+<div><p>Dict that specifies the size of the lattice e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">lattice_size</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;x&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s">&quot;y&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s">&quot;t&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s">&quot;s&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>config_number</strong> : int, optional</p>
+<blockquote>
+<div><p>The configuration number that this propagator corresponds to.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Any other parameters of the hadron e.g. charge of the quarks</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="pyontdd.lib.hadron.Hadron.fit">
+<tt class="descname">fit</tt><big>(</big><em>guess=None</em>, <em>fit_range=None</em>, <em>covariant_fit=False</em>, <em>correlated_fit=False</em>, <em>inv_covar=None</em>, <em>error=None</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/hadron.html#Hadron.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.hadron.Hadron.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the Hadron based on the parameters given.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>guess</strong> : dict</p>
+<p><strong>fit_range</strong> : tuple</p>
+<p><strong>covariant_fit</strong> : bool</p>
+<p><strong>correlated_fit</strong> : bool</p>
+<p><strong>inv_covar</strong> : ndarray</p>
+<p class="last"><strong>error</strong> : ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-pyontdd.lib.correlator"></span><dl class="class">
+<dt id="pyontdd.lib.correlator.Correlator">
+<em class="property">class </em><tt class="descclassname">pyontdd.lib.correlator.</tt><tt class="descname">Correlator</tt><big>(</big><em>data</em>, <em>lattice_size=None</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/correlator.html#Correlator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.correlator.Correlator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Correlator. Embodies the way we fit the data.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="pyontdd.lib.correlator.Correlator.get_fit_params">
+<tt class="descname">get_fit_params</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/correlator.html#Correlator.get_fit_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.correlator.Correlator.get_fit_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the fit parameters (if they exist). Useful if we want to access them and don&#8217;t want to refit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>dict</strong> :</p>
+<blockquote class="last">
+<div><p>Dict of the fit parameters</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyontdd.lib.correlator.PseudoscalarMesonIndividualPP">
+<em class="property">class </em><tt class="descclassname">pyontdd.lib.correlator.</tt><tt class="descname">PseudoscalarMesonIndividualPP</tt><big>(</big><em>data</em>, <em>lattice_size=None</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/correlator.html#PseudoscalarMesonIndividualPP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.correlator.PseudoscalarMesonIndividualPP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Pseudoscalar Meson that is fit individually with gamma structure Psuedoscalar-Pseudoscalar.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="pyontdd.lib.correlator.PseudoscalarMesonIndividualPP.fit">
+<tt class="descname">fit</tt><big>(</big><em>guess=None</em>, <em>fit_range=None</em>, <em>covariant_fit=False</em>, <em>correlated_fit=False</em>, <em>inv_covar=None</em>, <em>error=None</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/correlator.html#PseudoscalarMesonIndividualPP.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.correlator.PseudoscalarMesonIndividualPP.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit function for PsuedoscalarMesonIndividualPP.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-pyontdd.lib.hadron_collection"></span><dl class="class">
+<dt id="pyontdd.lib.hadron_collection.HadronCollection">
+<em class="property">class </em><tt class="descclassname">pyontdd.lib.hadron_collection.</tt><tt class="descname">HadronCollection</tt><big>(</big><em>hadrons</em>, <em>sort=True</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/hadron_collection.html#HadronCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.hadron_collection.HadronCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for collections of hadron objects. Defines a natural way to have many estimations of the same hadron that we
+can fit and perform other analysis on.</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<span class="target" id="module-pyontdd.lib.io"></span><span class="target" id="module-pyontdd.lib.register"></span><dl class="function">
+<dt id="pyontdd.lib.register.registerCorrelator">
+<tt class="descclassname">pyontdd.lib.register.</tt><tt class="descname">registerCorrelator</tt><big>(</big><em>f</em><big>)</big><a class="reference internal" href="_modules/pyontdd/lib/register.html#registerCorrelator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.register.registerCorrelator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to register a correlator type with the ones that CorrelatorFactory will search through.</p>
+</dd></dl>
+
+<span class="target" id="module-pyontdd.lib.registered_types"></span><dl class="class">
+<dt id="pyontdd.lib.registered_types.RegisteredCorrelatorTypes">
+<em class="property">class </em><tt class="descclassname">pyontdd.lib.registered_types.</tt><tt class="descname">RegisteredCorrelatorTypes</tt><a class="reference internal" href="_modules/pyontdd/lib/registered_types.html#RegisteredCorrelatorTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyontdd.lib.registered_types.RegisteredCorrelatorTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of registered Correlator types that can be accessed by various functions/classes.
+Initially empty, this is populated by pyontdd.lib.register.registerCorrelator(cls) as a decorator.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to pyontdd&#8217;s documentation!</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">pyontdd 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Shane Drury.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

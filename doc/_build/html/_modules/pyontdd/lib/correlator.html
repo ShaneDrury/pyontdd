@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyontdd.lib.correlator &mdash; pyontdd 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyontdd 0.1.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyontdd 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyontdd.lib.correlator</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">minuit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">fitfunc</span> <span class="kn">as</span> <span class="nn">ff</span>
+<span class="kn">from</span> <span class="nn">pyontdd.lib.register</span> <span class="kn">import</span> <span class="n">registerCorrelator</span>
+<span class="kn">from</span> <span class="nn">pyontdd.lib.registered_types</span> <span class="kn">import</span> <span class="n">RegisteredCorrelatorTypes</span>
+
+
+<span class="k">class</span> <span class="nc">CorrelatorFactory</span><span class="p">:</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">RegisteredCorrelatorTypes</span><span class="o">.</span><span class="n">types</span>  <span class="c"># Get the list of hadrons we can use from here.</span>
+                                             <span class="c"># Registered with @registerHadron decorator</span>
+
+    <span class="k">def</span> <span class="nf">createCorrelator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">correlator_fit_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">correlator_fit_type</span><span class="p">](</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Correlator"><a class="viewcode-back" href="../../../index.html#pyontdd.lib.correlator.Correlator">[docs]</a><span class="k">class</span> <span class="nc">Correlator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    docs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">lattice_size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lattice_size</span> <span class="o">=</span> <span class="n">lattice_size</span>
+
+    <span class="k">def</span> <span class="nf">fit_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">covariant_fit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">correlated_fit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">inv_covar</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                  <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guess</span> <span class="o">=</span> <span class="n">guess</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_range</span> <span class="o">=</span> <span class="n">fit_range</span>
+        <span class="k">if</span> <span class="n">inv_covar</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># We cannot do covariant fit if we don&#39;t provide this. Warn user.</span>
+            <span class="n">covariant_fit</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;No inverse covariance matrix provided, reverting to uncovariant fit&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inv_covar</span> <span class="o">=</span> <span class="n">inv_covar</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">covariant_fit</span> <span class="o">=</span> <span class="n">covariant_fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correlated_fit</span> <span class="o">=</span> <span class="n">correlated_fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c"># create x range (i.e. t) that we fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">]</span>  <span class="c"># Only uses certain fit range</span>
+        <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">]</span>  <span class="c"># Just set all errors to 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice_size</span><span class="p">[</span><span class="s">&quot;t&quot;</span><span class="p">]</span>  <span class="c"># Set total time extent</span>
+
+<div class="viewcode-block" id="Correlator.get_fit_params"><a class="viewcode-back" href="../../../index.html#pyontdd.lib.correlator.Correlator.get_fit_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_fit_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the fit parameters (if they exist). Useful if we want to access them and don&#39;t want to refit.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dict of the fit parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span>
+
+</div></div>
+<span class="k">class</span> <span class="nc">Meson</span><span class="p">(</span><span class="n">Correlator</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">PseudoscalarMeson</span><span class="p">(</span><span class="n">Meson</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">VectorMeson</span><span class="p">(</span><span class="n">Meson</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">VectorMesonSim</span><span class="p">(</span><span class="n">Meson</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@registerCorrelator</span>
+<span class="k">class</span> <span class="nc">VectorMesonIndividual</span><span class="p">(</span><span class="n">Meson</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@registerCorrelator</span>
+<div class="viewcode-block" id="PseudoscalarMesonIndividualPP"><a class="viewcode-back" href="../../../index.html#pyontdd.lib.correlator.PseudoscalarMesonIndividualPP">[docs]</a><span class="k">class</span> <span class="nc">PseudoscalarMesonIndividualPP</span><span class="p">(</span><span class="n">PseudoscalarMeson</span><span class="p">):</span>
+<div class="viewcode-block" id="PseudoscalarMesonIndividualPP.fit"><a class="viewcode-back" href="../../../index.html#pyontdd.lib.correlator.PseudoscalarMesonIndividualPP.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">covariant_fit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">correlated_fit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">inv_covar</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">guess</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;m&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_setup</span><span class="p">(</span><span class="n">guess</span><span class="o">=</span><span class="n">guess</span><span class="p">,</span> <span class="n">fit_range</span><span class="o">=</span><span class="n">fit_range</span><span class="p">,</span> <span class="n">covariant_fit</span><span class="o">=</span><span class="n">covariant_fit</span><span class="p">,</span> <span class="n">correlated_fit</span><span class="o">=</span><span class="n">correlated_fit</span><span class="p">,</span>
+                       <span class="n">inv_covar</span><span class="o">=</span><span class="n">inv_covar</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span>  <span class="c"># Set up the fit parameters internally</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariant_fit</span><span class="p">:</span>
+            <span class="n">chi2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">ff</span><span class="o">.</span><span class="n">chi2_covariant</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">PP</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;m&quot;</span><span class="p">:</span> <span class="n">m</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_covar</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chi2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">ff</span><span class="o">.</span><span class="n">chi2_uncovariant</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">PP</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;m&quot;</span><span class="p">:</span> <span class="n">m</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">minuit</span><span class="o">.</span><span class="n">Minuit</span><span class="p">(</span><span class="n">chi2</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">fit_params</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>  <span class="c"># Check covariance matrix is positive definite</span>
+        <span class="n">eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">eigs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Eigenvalue &lt; 1e-6: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">fit_params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;chi2&quot;</span><span class="p">:</span> <span class="n">chi2</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.</span><span class="p">)})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span> <span class="o">=</span> <span class="n">fit_params</span>
+        <span class="k">return</span> <span class="n">fit_params</span>
+
+
+
+</div></div>
+<span class="nd">@registerCorrelator</span>
+<span class="k">class</span> <span class="nc">PseudoscalarMesonSimultaneous</span><span class="p">(</span><span class="n">PseudoscalarMeson</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Baryon</span><span class="p">(</span><span class="n">Correlator</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@registerCorrelator</span>
+<span class="k">class</span> <span class="nc">BaryonInd</span><span class="p">(</span><span class="n">Baryon</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyontdd 0.1.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Shane Drury.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
