@@ -1,4 +1,4 @@
-import cPickle as pck
+import pickle as pck
 import os
 
 from pyontdd.lib.hadron import Hadron
@@ -23,12 +23,12 @@ def get_list_of_files(folder):
 
 
 def write_pickle_file(data, filename):
-    with open(filename, 'w') as f:
-            pck.dump(data, f)
+    with open(filename, 'wb') as f:
+        pck.dump(data, f)
 
 
 def read_pickle_file(filename):
-    with open(filename, 'r') as f:
+    with open(filename, 'rb') as f:
         return pck.load(f)
 
 

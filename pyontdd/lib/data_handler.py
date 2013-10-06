@@ -9,7 +9,7 @@ class DataHandlerIndividual:
         if len(data) == 0:  # Some fit ranges will make the data empty. Raise error if this is the case
             raise IndexError
         pared = {"data": data, "x": x}
-        for k, v in kwargs.iteritems():  # Handle anything else we throw at it
+        for k, v in kwargs.items():  # Handle anything else we throw at it
             if v is None:
                 pared[k] = None
             else:
@@ -19,14 +19,14 @@ class DataHandlerIndividual:
 
 class DataHandlerSimultaneous:
     def pare_data(self, data, fit_range, **kwargs):
-        rangelam = lambda x: np.arange(x[0], x[1] + 1)
-        x = map(rangelam, fit_range)
+        rangelam = lambda z: np.arange(z[0], z[1] + 1)
+        x = list(map(rangelam, fit_range))
         y = [d[xx] for d, xx in zip(data, x)]
         y_shape = [len(yy) for yy in y]
         if min(y_shape) == 0:  # Check none of the dimensions are zero
             raise IndexError
         pared = {"data": y, "x": x}
-        for k, v in kwargs.iteritems():  # Handle anything else we throw at it
+        for k, v in kwargs.items():  # Handle anything else we throw at it
             if v is None:
                 pared[k] = None
             else:

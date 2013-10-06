@@ -2,7 +2,6 @@ import unittest
 import os
 import numpy.random as nprnd
 import numpy as np
-
 from pyontdd.lib.io import hadron_from_pickle, write_pickle_file, hadron_collection_from_folder
 from pyontdd.lib.fitfunc import PP, AA, AP
 from pyontdd.lib.lattice import Lattice24c
@@ -16,9 +15,9 @@ class CorrelatorTests(unittest.TestCase):
 
     @staticmethod
     def makeSimCorrelator(m, z, Z, f, T):
-        corr = [[PP(t, m, z, T) + nprnd.normal(0., 1e-5) for t in range(T)],
-                [AA(t, m, f, Z, T) + nprnd.normal(0., 1e-5) for t in range(T)],
-                [AP(t, m, z, f, Z, T) + nprnd.normal(0., 1e-5) for t in range(T)]]
+        corr = [[PP(t, m, z, T) + nprnd.normal(0., 1e-4) for t in range(T)],
+                [AA(t, m, f, Z, T) + nprnd.normal(0., 1e-4) for t in range(T)],
+                [AP(t, m, z, f, Z, T) + nprnd.normal(0., 1e-4) for t in range(T)]]
         return corr
 
     def setUp(self):
@@ -30,8 +29,10 @@ class CorrelatorTests(unittest.TestCase):
             os.rmdir(self.folder_name_sim)
         except OSError:
             pass
-        os.mkdir(self.folder_name)
-        os.mkdir(self.folder_name_sim)
+        if not os.path.exists(self.folder_name):
+            os.mkdir(self.folder_name)
+        if not os.path.exists(self.folder_name_sim):
+            os.mkdir(self.folder_name_sim)
         self.data = []
         self.data_sim = []
         self.file_names = []
@@ -89,7 +90,6 @@ class CorrelatorTests(unittest.TestCase):
         fit_params = c.fit(**params)
         fit_errors = c.fit_errors
         tol = 1e-3
-        print self.mass, fit_params
         self.failUnless(np.abs((fit_params['m'] - self.mass)) < tol)
         self.failUnless(fit_errors['m'] < tol)
         self.failIf(np.abs((fit_params['m'] - 123.45)) < tol)
@@ -97,10 +97,10 @@ class CorrelatorTests(unittest.TestCase):
     def testSortCorrelators(self):
         c = hadron_collection_from_folder(self.folder_name, sort=True)
         nums = c.get_config_numbers()
-        self.failUnless(nums == range(1, self.N_CONFIG + 1))
+        self.failUnless(nums == list(range(1, self.N_CONFIG + 1)))
         d = hadron_collection_from_folder(self.folder_name, sort=False)
         nums = d.get_config_numbers()
-        self.failIf(nums == range(1, self.N_CONFIG + 1))
+        self.failIf(nums == list(range(1, self.N_CONFIG + 1)))
 
     def testFitRangeCorrelators(self):
         c = hadron_collection_from_folder(self.folder_name)
@@ -110,7 +110,7 @@ class CorrelatorTests(unittest.TestCase):
 
     def testFitOneSimCorrelator(self):
         c = hadron_from_pickle(os.path.join(self.folder_name_sim, self.file_names[0]))
-        params = {"fit_range": ((3, 32), (1, 32), (3, 30)),
+        params = {"fit_range": ((0, 32), (0, 32), (0, 32)),
                   "guess": {"m": self.mass, "z": 1.0, "f": 1.0}, "covariant_fit": False,
                   'fit_type': 'Simultaneous'}
         fit_params = c.fit(**params)
@@ -126,7 +126,6 @@ class CorrelatorTests(unittest.TestCase):
                   'fit_type': 'Simultaneous'}
         fit_params = c.fit(**params)
         fit_errors = c.fit_errors
-        print fit_params['m'], self.mass, fit_errors['m']
         tol = 1e-3
         self.failUnless(np.abs((fit_params['m'] - self.mass)) < tol)
         self.failUnless(fit_errors['m'] < tol)
@@ -146,7 +145,8 @@ class BaryonTests(unittest.TestCase):
             os.rmdir(self.folder_name)
         except OSError:
             pass
-        os.mkdir(self.folder_name)
+        if not os.path.exists(self.folder_name):
+            os.mkdir(self.folder_name)
         self.data = []
         self.data_sim = []
         self.file_names = []
@@ -187,7 +187,6 @@ class BaryonTests(unittest.TestCase):
         fit_params = c.fit(**params)
         fit_errors = c.fit_errors
         tol = 1e-3
-        print self.mass, fit_params
         self.failUnless(np.abs((fit_params['m'] - self.mass)) < tol)
         self.failUnless(fit_errors['m'] < tol)
         self.failIf(np.abs((fit_params['m'] - 123.45)) < tol)

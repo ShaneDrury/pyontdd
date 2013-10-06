@@ -1,11 +1,11 @@
 from collections import defaultdict
-import numpy as np
 from operator import attrgetter
 
+import numpy as np
 import pylab
 
-from hadron import Hadron
-from statistics import jk_reduce, jk_error
+from pyontdd.lib.hadron import Hadron
+from pyontdd.lib.statistics import jk_reduce, jk_error
 
 
 class HadronCollection(object):
@@ -42,7 +42,7 @@ class HadronCollection(object):
     def _sort_fit_params(self, fit_params):
         fp = defaultdict(list)
         for d in fit_params:
-            for k, v in d.iteritems():
+            for k, v in d.items():
                 fp[k].append(v)
         return fp
 
@@ -60,7 +60,7 @@ class HadronCollection(object):
         all_fit_params = [h.fit(**kwargs) for h in jk_hadrons]
         self.jk_params = self._sort_fit_params(all_fit_params)
         self.central_params = self.central_hadron.fit(**kwargs)
-        for k, v in self.central_params.iteritems():
+        for k, v in self.central_params.items():
             self.fit_errors[k] = jk_error(v, self.jk_params[k])
         return self.central_params
 

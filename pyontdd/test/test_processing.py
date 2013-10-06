@@ -1,5 +1,5 @@
 import unittest
-import cPickle as pck
+import pickle as pck
 import os
 import shutil
 from pyontdd.lib.processing import convert_folder_to_pickle
@@ -23,7 +23,7 @@ class ProcessingTests(unittest.TestCase):
                                  parameters={'source': 'GAM_5', 'sink': 'GAM_5', 'lattice': Lattice32c()})
         with open(os.path.join(self.output_folder,
                                'm0.03.m0.03.q-0.3333333333.q-0.3333333333.PP',
-                               '510.pickle'), 'r') as f:
+                               '510.pickle'), 'rb') as f:
             t = pck.load(f)
 
         self.failUnless(t['data'][0] == 4.984743e+06)
