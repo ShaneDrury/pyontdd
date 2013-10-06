@@ -19,8 +19,9 @@ class DataHandlerIndividual:
 
 class DataHandlerSimultaneous:
     def pare_data(self, data, fit_range, **kwargs):
-        rangelam = lambda z: np.arange(z[0], z[1] + 1)
-        x = list(map(rangelam, fit_range))
+        def range_sim(z):
+            return np.arange(z[0], z[1] + 1)
+        x = [range_sim(ff) for ff in fit_range]
         y = [d[xx] for d, xx in zip(data, x)]
         y_shape = [len(yy) for yy in y]
         if min(y_shape) == 0:  # Check none of the dimensions are zero

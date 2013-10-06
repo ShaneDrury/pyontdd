@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyontdd',
-    version='1.0.0',
+    version='1.0.1',
     packages=['pyontdd', 'pyontdd.lib'],
     url='',
     license='',
